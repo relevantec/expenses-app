@@ -1,0 +1,35 @@
+  // var queryString: String? = ""
+  //       queryString = queryString?.urlQueryByAppending(parameter: "client_id", value: self.consumerKey, encodeError)
+  //       if let callbackURL = callbackURL {
+  //           let value = self.encodeCallbackURL ? callbackURL.string.urlEncoded : callbackURL.string
+  //           queryString = queryString?.urlQueryByAppending(parameter: "redirect_uri", value: value, encode: self.encodeCallbackURLQuery, encodeError)
+  //       }
+  //       queryString = queryString?.urlQueryByAppending(parameter: "response_type", value: self.responseType, encodeError)
+  //       queryString = queryString?.urlQueryByAppending(parameter: "scope", value: scope, encodeError)
+  //       queryString = queryString?.urlQueryByAppending(parameter: "state", value: state, encodeError)
+        open func postOAuthAccessTokenWithRequestToken(byCode code: String, callbackURL: URL?, headers: OAuthSwift.Headers? = nil, completionHandler completion: @escaping TokenCompletionHandler) -> OAuthSwiftRequestHandle? {
+
+        var parameters = OAuthSwift.Parameters()
+        parameters["client_id"] = self.consumerKey
+        parameters["code"] = code
+        parameters["grant_type"] = "authorization_code"
+
+        // PKCE - extra parameter
+        if let codeVerifier = self.codeVerifier {
+            parameters["code_verifier"] = codeVerifier
+            // Don't send client secret when using PKCE, some services complain
+        } else {
+            // client secrets should only be used for web style apps where they can't be decompiled (use pkce instead), so if it's empty, don't post it as some servers will reject it
+            // https://www.oauth.com/oauth2-servers/client-registration/client-id-secret/
+            if !self.consumerSecret.isEmpty {
+                parameters["client_secret"] = self.consumerSecret
+            }
+        }
+
+        if let callbackURL = callbackURL {
+            parameters["redirect_uri"] = callbackURL.absoluteString.safeStringByRemovingPercentEncoding
+        }
+
+        OAuthSwift.log?.trace("Add security parameters: \(parameters)")
+        return requestOAuthAccessToken(withParameters: parameters, headers: headers, completionHandler: completion)
+    }
