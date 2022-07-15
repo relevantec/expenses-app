@@ -6,6 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
+
 
 const matComponents = [
   MatToolbarModule,
@@ -13,7 +16,8 @@ const matComponents = [
   MatFormFieldModule,
   MatInputModule,
   MatDialogModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  DragDropModule
 ];
 
 @NgModule({

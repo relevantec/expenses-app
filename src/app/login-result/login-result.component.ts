@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { mergeMap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../_services/auth.service';
 
 @Component({
@@ -10,20 +9,22 @@ import { AuthService } from '../_services/auth.service';
   styleUrls: ['./login-result.component.scss'],
 })
 export class LoginResultComponent implements OnInit {
-  url!: string;
-  clientId = 'com.leadag.digitizer';
 
-  constructor(private router: Router, private authService: AuthService) {}
+  result!: string;
+  error: any;
+  
+  constructor(private router: Router, private authService: AuthService, public route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.url = this.router.url.split('#')[1];
+    this.result = this.route.snapshot.paramMap.get('token')!;
+    this.authService.saveToken(this.result);
   }
 
-  getToken() {
-    this.authService.postCode(this.url, this.clientId).subscribe({
-      next: (v) => console.log(v),
-      error: (e) => console.error(e),
-      complete: () => console.info('complete'),
-    });
+  getInfo() {
+    this.authService.getInfo().subscribe({
+          next: (v) => v,
+          error: (e) => this.error = e,
+          complete: () => console.info('complete'),
+        });
   }
 }

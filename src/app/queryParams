@@ -1,12 +1,12 @@
-  // var queryString: String? = ""
-  //       queryString = queryString?.urlQueryByAppending(parameter: "client_id", value: self.consumerKey, encodeError)
-  //       if let callbackURL = callbackURL {
-  //           let value = self.encodeCallbackURL ? callbackURL.string.urlEncoded : callbackURL.string
-  //           queryString = queryString?.urlQueryByAppending(parameter: "redirect_uri", value: value, encode: self.encodeCallbackURLQuery, encodeError)
-  //       }
-  //       queryString = queryString?.urlQueryByAppending(parameter: "response_type", value: self.responseType, encodeError)
-  //       queryString = queryString?.urlQueryByAppending(parameter: "scope", value: scope, encodeError)
-  //       queryString = queryString?.urlQueryByAppending(parameter: "state", value: state, encodeError)
+        // var queryString: String? = ""
+        //       queryString = queryString?.urlQueryByAppending(parameter: "client_id", value: self.consumerKey, encodeError)
+        //       if let callbackURL = callbackURL {
+        //           let value = self.encodeCallbackURL ? callbackURL.string.urlEncoded : callbackURL.string
+        //           queryString = queryString?.urlQueryByAppending(parameter: "redirect_uri", value: value, encode: self.encodeCallbackURLQuery, encodeError)
+        //       }
+        //       queryString = queryString?.urlQueryByAppending(parameter: "response_type", value: self.responseType, encodeError)
+        //       queryString = queryString?.urlQueryByAppending(parameter: "scope", value: scope, encodeError)
+        //       queryString = queryString?.urlQueryByAppending(parameter: "state", value: state, encodeError)
         open func postOAuthAccessTokenWithRequestToken(byCode code: String, callbackURL: URL?, headers: OAuthSwift.Headers? = nil, completionHandler completion: @escaping TokenCompletionHandler) -> OAuthSwiftRequestHandle? {
 
         var parameters = OAuthSwift.Parameters()
@@ -33,3 +33,7 @@
         OAuthSwift.log?.trace("Add security parameters: \(parameters)")
         return requestOAuthAccessToken(withParameters: parameters, headers: headers, completionHandler: completion)
     }
+
+    //client_id=com.leadag.digitizer&client_secret=mLVRSUUxY8tSHrrQhYqK&grant_type=authorization_code&code=FeuCZPBc4HvMnFxZ0nGgjCjJ3BUfsa&redirect_uri=https%3A%2F%2Fdigitizer.cloud%2F
+    // client_id=com.leadag.digitizer&client_secret=mLVRSUUxY8tSHrrQhYqK&grant_type=authorization_code&code=AcoKwkVD6cTpyq9SoavvKx24LidepN&redirect_uri=https%3A%2F%2Fdigitizer.cloud%2F
+    // client_id=com.leadag.digitizer&client_secret=mLVRSUUxY8tSHrrQhYqK&grant_type=authorization_code&code=SffgZHqUBq9PDkHVzFJ23Iu8USyauN&redirect_uri=https%253A%252F%252Fdigitizer.cloud%252F

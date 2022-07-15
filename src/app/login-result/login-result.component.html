@@ -1,5 +1,9 @@
 <p>login-result works!</p>
-<button (click)="getToken()">Click!</button>
+<button (click)="getInfo()">Get Info</button>
 <br>
 <a routerLink="/login">Back</a>
-
+<br>
+<h1>Result:</h1>
+<pre>Result:{{ result | json }}</pre>
+<br>
+<pre>Error:{{ error | json }}</pre>

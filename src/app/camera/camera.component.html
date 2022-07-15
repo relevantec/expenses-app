@@ -1,0 +1,68 @@
+<div class="photo-wrapper">
+  <input type="file" accept="image/*" (change)="uploadPhoto($event)" />
+  <button (click)="takeRectangleFromImg()">Cut the Image</button>
+  <div class="canvas-wrapper" #wrapper>
+    <canvas #canvas class="canvas-el" height="500" width="350"> </canvas>
+    <svg>
+      <polygon
+        [attr.points]="getPaths()"
+        style="
+          fill: lightblue;
+          fill-opacity: 0.4;
+          stroke: blue;
+          stroke-width: 1;
+        "
+      />
+    </svg>
+    <div
+      class="proxy"
+      cdkDrag
+      (cdkDragStarted)="onDragProxyStart()"
+      (cdkDragMoved)="onDragProxy($event)"
+      [cdkDragBoundary]="wrapper"
+      [style.left.px]="proxy.x"
+      [style.top.px]="proxy.y"
+      [style.width.px]="proxy.width"
+      [style.height.px]="proxy.height"
+    ></div>
+    <div
+      (cdkDragMoved)="onDrag('topLeft', $event)"
+      (cdkDragStarted)="onDragStart($event)"
+      cdkDrag
+      [cdkDragBoundary]="wrapper"
+      class="top-left circle"
+      [style.left.px]="topLeft.x"
+      [style.top.px]="topLeft.y"
+    ></div>
+    <div
+      (cdkDragStarted)="onDragStart($event)"
+      [cdkDragBoundary]="wrapper"
+      (cdkDragMoved)="onDrag('topRight', $event)"
+      cdkDrag
+      class="top-right circle"
+      [style.left.px]="topRight.x"
+      [style.top.px]="topRight.y"
+    ></div>
+    <div
+      (cdkDragStarted)="onDragStart($event)"
+      [cdkDragBoundary]="wrapper"
+      (cdkDragMoved)="onDrag('bottomRight', $event)"
+      cdkDrag
+      class="bottom-right circle"
+      [style.left.px]="bottomRight.x"
+      [style.top.px]="bottomRight.y"
+    ></div>
+    <div
+      (cdkDragStarted)="onDragStart($event)"
+      [cdkDragBoundary]="wrapper"
+      (cdkDragMoved)="onDrag('bottomLeft', $event)"
+      cdkDrag
+      class="bottom-left circle"
+      [style.left.px]="bottomLeft.x"
+      [style.top.px]="bottomLeft.y"
+    ></div>
+  </div>
+  <div #placeholder>
+    <img  alt="alt">
+  </div>
+</div>

@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/expenses-app",
+            "outputPath": "dist/expenses-app/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -75,7 +75,8 @@
               "browserTarget": "expenses-app:build:production"
             },
             "development": {
-              "browserTarget": "expenses-app:build:development"
+              "browserTarget": "expenses-app:build:development",
+              "port": 8080
             }
           },
           "defaultConfiguration": "development"
@@ -103,6 +104,65 @@
             ],
             "scripts": []
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/expenses-app/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "expenses-app:build:development",
+              "serverTarget": "expenses-app:server:development"
+            },
+            "production": {
+              "browserTarget": "expenses-app:build:production",
+              "serverTarget": "expenses-app:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "expenses-app:build:production",
+              "serverTarget": "expenses-app:server:production"
+            },
+            "development": {
+              "browserTarget": "expenses-app:build:development",
+              "serverTarget": "expenses-app:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

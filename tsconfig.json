@@ -1,8 +1,13 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
+
+  "include": [
+    "src", "src/typings.d.ts"
+  ],
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "allowJs": true,
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -11,13 +16,14 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2017",
     "module": "es2020",
+    "declarationMap": true,
     "lib": [
       "es2020",
       "dom"
