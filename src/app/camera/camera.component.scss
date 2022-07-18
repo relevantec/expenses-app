@@ -15,11 +15,13 @@
 
 canvas {
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border: 1px solid blue;
-    object-fit: contain;
+    object-fit: fill;
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 svg {
@@ -46,6 +48,12 @@ svg {
     opacity: 0;
     background: yellow;
     transform: translate3d(0, 0, 0) !important;
+}
+
+.crop-wrapper {
+    max-width: fit-content;
+    max-width: fit-content;
+    overflow: hidden;
 }
 
 

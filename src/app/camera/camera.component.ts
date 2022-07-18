@@ -1,13 +1,6 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnInit,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
-import { CdkDragDrop, CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
-import { glfx } from 'src/typings' ;
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
+import { glfx } from 'src/typings';
 
 @Component({
   selector: 'app-camera',
@@ -39,15 +32,13 @@ export class CameraComponent implements OnInit {
     topLeft: { x: 0, y: 0 },
     topRight: { x: 0, y: 0 },
     bottomRight: { x: 0, y: 0 },
-    bottomLeft: { x: 0, y: 0 }
-  }
+    bottomLeft: { x: 0, y: 0 },
+  };
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.calcProxy();
-    console.log(glfx)
   }
 
   getPaths() {
@@ -66,7 +57,7 @@ export class CameraComponent implements OnInit {
       this.bottomLeft.y,
       this.bottomRight.y
     );
-    
+
     this.proxy.x = Math.min(
       this.topLeft.x,
       this.bottomLeft.x,
@@ -122,8 +113,8 @@ export class CameraComponent implements OnInit {
     render.onload = (event) => {
       let img = new Image();
       img.onload = () => {
-        img.width = this.canvas.nativeElement.width;
-        img.height = this.canvas.nativeElement.height;
+        this.canvas.nativeElement.width = img.width;
+        this.canvas.nativeElement.height = img.height;
         this.context.drawImage(img, 0, 0);
       };
       img.src = event.target?.result as string;
@@ -132,44 +123,30 @@ export class CameraComponent implements OnInit {
   }
 
   takeRectangleFromImg() {
+    let before = [
+      this.topLeft.x,
+      this.topLeft.y,
+      this.topRight.x,
+      this.topRight.y,
+      this.bottomLeft.x,
+      this.bottomLeft.y,
+      this.bottomRight.x,
+      this.bottomRight.y,
+    ];
+
+    const width = 350;
+    const height = 500;
+    let after = [0, 0, width, 0, 0, height, width, height];
+
     const canvasCrop = glfx.canvas();
     const image = this.canvas.nativeElement;
     const texture = canvasCrop.texture(image);
-    // canvasCrop.draw(texture).ink(0.25).update();
-    // canvasCrop.draw(texture).perspective(
-    //   [5, 10, 120, 10, 120, 200, 10, 200],
-    //   [
-    //         this.topLeft.x,
-    //         this.topLeft.y,
-    //         this.topRight.x,
-    //         this.topRight.y,
-    //         this.bottomRight.x,
-    //         this.bottomRight.y,
-    //         this.bottomLeft.x,
-    //         this.bottomLeft.y
-    //       ]
-    // )
-    image.parentNode?.insertBefore(this.placeholder.nativeElement, image);
-    // console.log(this.topRight.x + this.offSet.x);
-    // image.parentNode?.removeChild(image);
-    // const texture = canvasCrop.texture(this.placeholder.nativeElement);
-      // this.placeholder.nativeElement.insertAdjacentElement('afterend' ,canvasCrop)
-      
-      // canvasCrop.draw(texture);
-    // texture.draw().perspective(
-    //   [
-    //     0,0,0,0,0,0,0,0
-    //   ],
-    //   [
-    //     this.topLeft.x,
-    //     this.topLeft.y,
-    //     this.topRight.x,
-    //     this.topRight.y,
-    //     this.bottomRight.x,
-    //     this.bottomRight.y,
-    //     this.bottomLeft.x,
-    //     this.bottomLeft.y
-    //   ]
-    // ).update();
+    this.placeholder.nativeElement.appendChild(canvasCrop);
+
+    canvasCrop.draw(texture);
+    canvasCrop.perspective(before, after);
+    canvasCrop.width = height;
+    canvasCrop.height = width;
+    canvasCrop.update();
   }
 }

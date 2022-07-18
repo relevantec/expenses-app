@@ -2,7 +2,7 @@
   <input type="file" accept="image/*" (change)="uploadPhoto($event)" />
   <button (click)="takeRectangleFromImg()">Cut the Image</button>
   <div class="canvas-wrapper" #wrapper>
-    <canvas #canvas class="canvas-el" height="500" width="350"> </canvas>
+    <canvas #canvas class="canvas-el"> </canvas>
     <svg>
       <polygon
         [attr.points]="getPaths()"
@@ -62,7 +62,5 @@
       [style.top.px]="bottomLeft.y"
     ></div>
   </div>
-  <div #placeholder>
-    <img  alt="alt">
-  </div>
+  <div class="crop-wrapper" #placeholder></div>
 </div>
