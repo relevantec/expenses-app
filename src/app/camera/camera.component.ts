@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { glfx } from 'src/typings';
+
+const DOT_WIDTH = 16;
 
 @Component({
   selector: 'app-camera',
@@ -8,31 +10,27 @@ import { glfx } from 'src/typings';
   styleUrls: ['./camera.component.scss'],
 })
 export class CameraComponent implements OnInit {
-  @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('wrapper') wrapperEl!: ElementRef<HTMLDivElement>;
-  @ViewChild('placeholder') placeholder!: ElementRef<HTMLDivElement>;
+  @ViewChild('previewRef') preview?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('outputRef') output!: ElementRef<HTMLDivElement>;
 
-  context!: any;
+  img?: HTMLImageElement;
 
-  offSet = { x: 0, y: 0 };
+  // a ------- b
+  //  \       /
+  //   c --- d
+  a = { x: 0, y: 0 };
+  b = { x: 0, y: 0 };
+  c = { x: 0, y: 0 };
+  d = { x: 0, y: 0 };
 
-  topLeft = { x: 120, y: 120 };
-  topRight = { x: 260, y: 120 };
-  bottomRight = { x: 300, y: 270 };
-  bottomLeft = { x: 100, y: 270 };
+  proxy = { x: 0, y: 0, w: 0, h: 0 };
+  boundry = { x: 0, y: 0, w: 0, h: 0, s: 1 };
 
-  proxy = {
-    y: 0,
-    x: 0,
-    width: 0,
-    height: 0,
-  };
-
-  offsetProxy = {
-    topLeft: { x: 0, y: 0 },
-    topRight: { x: 0, y: 0 },
-    bottomRight: { x: 0, y: 0 },
-    bottomLeft: { x: 0, y: 0 },
+  old = {
+    a: { x: 0, y: 0 },
+    b: { x: 0, y: 0 },
+    d: { x: 0, y: 0 },
+    c: { x: 0, y: 0 },
   };
 
   constructor() {}
@@ -41,112 +39,162 @@ export class CameraComponent implements OnInit {
     this.calcProxy();
   }
 
-  getPaths() {
+  getPath() {
     return `
-    ${this.topLeft.x}, ${this.topLeft.y} 
-    ${this.topRight.x}, ${this.topRight.y} 
-    ${this.bottomRight.x}, ${this.bottomRight.y} 
-    ${this.bottomLeft.x}, ${this.bottomLeft.y}
+      ${this.a.x}, ${this.a.y} ${this.b.x}, ${this.b.y}
+      ${this.d.x}, ${this.d.y} ${this.c.x}, ${this.c.y}
     `;
   }
 
   calcProxy() {
-    this.proxy.y = Math.min(
-      this.topLeft.y,
-      this.topRight.y,
-      this.bottomLeft.y,
-      this.bottomRight.y
-    );
-
-    this.proxy.x = Math.min(
-      this.topLeft.x,
-      this.bottomLeft.x,
-      this.topRight.x,
-      this.bottomRight.x
-    );
-    this.proxy.width =
-      Math.max(this.topRight.x, this.bottomRight.x) - this.proxy.x;
-    this.proxy.height =
-      Math.max(this.bottomLeft.y, this.bottomRight.y) - this.proxy.y;
+    this.proxy.x = Math.min(this.a.x, this.c.x, this.b.x, this.d.x);
+    this.proxy.y = Math.min(this.a.y, this.b.y, this.c.y, this.d.y);
+    this.proxy.w =
+      Math.max(this.a.x, this.c.x, this.b.x, this.d.x) - this.proxy.x;
+    this.proxy.h =
+      Math.max(this.a.y, this.b.y, this.c.y, this.d.y) - this.proxy.y;
   }
 
-  onDragProxyStart() {
-    this.offsetProxy.topLeft = Object.assign({}, this.topLeft);
-    this.offsetProxy.topRight = Object.assign({}, this.topRight);
-    this.offsetProxy.bottomRight = Object.assign({}, this.bottomRight);
-    this.offsetProxy.bottomLeft = Object.assign({}, this.bottomLeft);
-  }
+  calcBoundry() {
+    const canvas = this.preview?.nativeElement;
+    if (!canvas) return;
+    if (!canvas.parentElement) return;
+    const cvRect = canvas.getBoundingClientRect();
+    const wrRect = canvas.parentElement.getBoundingClientRect();
+    this.boundry.w = cvRect.width + DOT_WIDTH;
+    this.boundry.h = cvRect.height + DOT_WIDTH;
+    this.boundry.x = cvRect.left - wrRect.left - DOT_WIDTH / 2;
+    this.boundry.y = cvRect.top - wrRect.top - DOT_WIDTH / 2;
+    this.boundry.s = canvas.width / cvRect.width;
 
-  onDragProxy(e: CdkDragMove) {
-    this.topLeft.x = e.distance.x + this.offsetProxy.topLeft.x;
-    this.topLeft.y = e.distance.y + this.offsetProxy.topLeft.y;
-    this.topRight.x = e.distance.x + this.offsetProxy.topRight.x;
-    this.topRight.y = e.distance.y + this.offsetProxy.topRight.y;
-    this.bottomRight.x = e.distance.x + this.offsetProxy.bottomRight.x;
-    this.bottomRight.y = e.distance.y + this.offsetProxy.bottomRight.y;
-    this.bottomLeft.x = e.distance.x + this.offsetProxy.bottomLeft.x;
-    this.bottomLeft.y = e.distance.y + this.offsetProxy.bottomLeft.y;
+    this.a.x = this.c.x = this.boundry.w / 6;
+    this.b.x = this.d.x = this.a.x * 5;
+    this.a.y = this.b.y = this.boundry.h / 6;
+    this.c.y = this.d.y = this.a.y * 5;
     this.calcProxy();
   }
 
-  onDrag(
-    circle: 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft' | 'proxy',
-    e: CdkDragMove
-  ) {
-    this[circle].x = e.pointerPosition.x - this.offSet.x;
-    this[circle].y = e.pointerPosition.y - this.offSet.y;
+  onDragStarted() {
+    this.old.a = Object.assign({}, this.a);
+    this.old.b = Object.assign({}, this.b);
+    this.old.d = Object.assign({}, this.d);
+    this.old.c = Object.assign({}, this.c);
+  }
+
+  onDragMoved(el: 'a' | 'b' | 'c' | 'd' | 'all', e: CdkDragMove) {
+    const move: Array<'a' | 'b' | 'c' | 'd'> =
+      el == 'all' ? ['a', 'b', 'c', 'd'] : [el];
+    move.forEach((point) => {
+      this[point].x = e.distance.x + this.old[point].x;
+      this[point].y = e.distance.y + this.old[point].y;
+    });
     this.calcProxy();
   }
 
-  onDragStart(e: CdkDragStart) {
-    let el = e.source.boundaryElement as HTMLDivElement;
-    const rect = el.getBoundingClientRect();
-    this.offSet.x = rect.x;
-    this.offSet.y = rect.y;
+  onResize() {
+    this.calcBoundry();
   }
 
-  uploadPhoto(e: any) {
-    let render = new FileReader();
-    if (this.canvas.nativeElement.getContext('2d')) {
-      this.context = this.canvas.nativeElement.getContext('2d');
-    }
+  loadPhoto(e: any) {
+    const render = new FileReader();
     render.onload = (event) => {
-      let img = new Image();
+      const img = new Image();
       img.onload = () => {
-        this.canvas.nativeElement.width = img.width;
-        this.canvas.nativeElement.height = img.height;
-        this.context.drawImage(img, 0, 0);
+        const canvas = this.preview?.nativeElement;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        this.calcBoundry();
       };
       img.src = event.target?.result as string;
+      this.img = img;
     };
     render.readAsDataURL(e.target.files[0]);
   }
 
   takeRectangleFromImg() {
-    let before = [
-      this.topLeft.x,
-      this.topLeft.y,
-      this.topRight.x,
-      this.topRight.y,
-      this.bottomLeft.x,
-      this.bottomLeft.y,
-      this.bottomRight.x,
-      this.bottomRight.y,
-    ];
+    if (!this.preview) return;
 
-    const width = 350;
-    const height = 500;
-    let after = [0, 0, width, 0, 0, height, width, height];
+    try {
+      var fx = glfx.canvas();
+    } catch (err) {
+      console.error(err);
+      return;
+    }
 
-    const canvasCrop = glfx.canvas();
-    const image = this.canvas.nativeElement;
-    const texture = canvasCrop.texture(image);
-    this.placeholder.nativeElement.appendChild(canvasCrop);
+    const crop = document.createElement('canvas');
+    const ctx = crop.getContext('2d');
+    if (!ctx) return;
 
-    canvasCrop.draw(texture);
-    canvasCrop.perspective(before, after);
-    canvasCrop.width = height;
-    canvasCrop.height = width;
-    canvasCrop.update();
+    const ab = Math.hypot(this.b.x - this.a.x, this.b.y - this.a.y);
+    const cd = Math.hypot(this.d.x - this.c.x, this.d.y - this.c.y);
+    const ow = this.boundry.s * (ab + cd) / 2;
+
+    const ac = Math.hypot(this.c.x - this.a.x, this.c.y - this.a.y);
+    const bd = Math.hypot(this.d.x - this.b.x, this.d.y - this.b.y);
+    const oh = this.boundry.s * (ac + bd) / 2;
+
+    const min = {
+      x: this.proxy.x,
+      y: this.proxy.y,
+    };
+
+    const cw = this.proxy.w;
+    const ch = this.proxy.h;
+
+    let scale = {
+      x: ow / cw,
+      y: oh / ch,
+    };
+
+    console.log(this.boundry.s);
+
+    crop.width = ow;
+    crop.height = oh;
+
+    const src = this.preview.nativeElement;
+
+    ctx.drawImage(
+      src,
+      min.x * this.boundry.s,
+      min.y * this.boundry.s,
+      cw * this.boundry.s,
+      ch * this.boundry.s,
+      0,
+      0,
+      ow,
+      oh
+    );
+
+    this.output.nativeElement.replaceChildren();
+    this.output.nativeElement.appendChild(crop);
+
+    const dot = (pos: string) => {
+      const ind = pos[0] as 'a' | 'b' | 'c' | 'd';
+      const axis = pos[1] as 'x' | 'y';
+      return (this[ind][axis] - min[axis]) * scale[axis];
+    };
+
+    let img = new Image();
+    img.src = crop.toDataURL('image/png');
+    img.addEventListener('load', () => {
+      let before = [];
+      before.push(dot('ax'), dot('ay'), dot('bx'), dot('by'));
+      before.push(dot('cx'), dot('cy'), dot('dx'), dot('dy'));
+
+      let after = [];
+      after.push(0, 0, img.width, 0);
+      after.push(0, img.height, img.width, img.height);
+
+      console.log({ before, after });
+
+      fx.draw(fx.texture(img)).perspective(before, after).update();
+      this.output.nativeElement.appendChild(fx);
+    });
   }
 }

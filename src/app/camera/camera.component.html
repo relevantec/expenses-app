@@ -1,66 +1,67 @@
 <div class="photo-wrapper">
-  <input type="file" accept="image/*" (change)="uploadPhoto($event)" />
+  <input type="file" accept="image/*" (change)="loadPhoto($event)" />
   <button (click)="takeRectangleFromImg()">Cut the Image</button>
-  <div class="canvas-wrapper" #wrapper>
-    <canvas #canvas class="canvas-el"> </canvas>
+</div>
+<div *ngIf="img" class="preview-wrapper" (window:resize)="onResize()">
+  <canvas #previewRef class="preview-canvas"></canvas>
+  <div
+    #boundryRef
+    class="preview-boundary"
+    [style.left.px]="boundry.x"
+    [style.top.px]="boundry.y"
+    [style.width.px]="boundry.w"
+    [style.height.px]="boundry.h"
+  >
     <svg>
-      <polygon
-        [attr.points]="getPaths()"
-        style="
-          fill: lightblue;
-          fill-opacity: 0.4;
-          stroke: blue;
-          stroke-width: 1;
-        "
-      />
+      <polygon [attr.points]="getPath()" />
     </svg>
     <div
       class="proxy"
       cdkDrag
-      (cdkDragStarted)="onDragProxyStart()"
-      (cdkDragMoved)="onDragProxy($event)"
-      [cdkDragBoundary]="wrapper"
+      [cdkDragBoundary]="boundryRef"
+      (cdkDragStarted)="onDragStarted()"
+      (cdkDragMoved)="onDragMoved('all', $event)"
       [style.left.px]="proxy.x"
       [style.top.px]="proxy.y"
-      [style.width.px]="proxy.width"
-      [style.height.px]="proxy.height"
+      [style.width.px]="proxy.w"
+      [style.height.px]="proxy.h"
     ></div>
     <div
-      (cdkDragMoved)="onDrag('topLeft', $event)"
-      (cdkDragStarted)="onDragStart($event)"
-      cdkDrag
-      [cdkDragBoundary]="wrapper"
       class="top-left circle"
-      [style.left.px]="topLeft.x"
-      [style.top.px]="topLeft.y"
+      cdkDrag
+      [cdkDragBoundary]="boundryRef"
+      (cdkDragStarted)="onDragStarted()"
+      (cdkDragMoved)="onDragMoved('a', $event)"
+      [style.left.px]="a.x"
+      [style.top.px]="a.y"
     ></div>
     <div
-      (cdkDragStarted)="onDragStart($event)"
-      [cdkDragBoundary]="wrapper"
-      (cdkDragMoved)="onDrag('topRight', $event)"
       cdkDrag
+      [cdkDragBoundary]="boundryRef"
+      (cdkDragStarted)="onDragStarted()"
+      (cdkDragMoved)="onDragMoved('b', $event)"
       class="top-right circle"
-      [style.left.px]="topRight.x"
-      [style.top.px]="topRight.y"
+      [style.left.px]="b.x"
+      [style.top.px]="b.y"
     ></div>
     <div
-      (cdkDragStarted)="onDragStart($event)"
-      [cdkDragBoundary]="wrapper"
-      (cdkDragMoved)="onDrag('bottomRight', $event)"
-      cdkDrag
-      class="bottom-right circle"
-      [style.left.px]="bottomRight.x"
-      [style.top.px]="bottomRight.y"
-    ></div>
-    <div
-      (cdkDragStarted)="onDragStart($event)"
-      [cdkDragBoundary]="wrapper"
-      (cdkDragMoved)="onDrag('bottomLeft', $event)"
-      cdkDrag
       class="bottom-left circle"
-      [style.left.px]="bottomLeft.x"
-      [style.top.px]="bottomLeft.y"
+      cdkDrag
+      [cdkDragBoundary]="boundryRef"
+      (cdkDragStarted)="onDragStarted()"
+      (cdkDragMoved)="onDragMoved('c', $event)"
+      [style.left.px]="c.x"
+      [style.top.px]="c.y"
+    ></div>
+    <div
+      class="bottom-right circle"
+      cdkDrag
+      [cdkDragBoundary]="boundryRef"
+      (cdkDragStarted)="onDragStarted()"
+      (cdkDragMoved)="onDragMoved('d', $event)"
+      [style.left.px]="d.x"
+      [style.top.px]="d.y"
     ></div>
   </div>
-  <div class="crop-wrapper" #placeholder></div>
 </div>
+<div class="crop-wrapper" #outputRef></div>
