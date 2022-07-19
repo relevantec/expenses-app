@@ -47,10 +47,10 @@ export class CameraComponent implements OnInit {
   }
 
   calcProxy() {
-    this.proxy.x = Math.min(this.a.x, this.c.x, this.b.x, this.d.x);
+    this.proxy.x = Math.min(this.a.x, this.b.x, this.c.x, this.d.x);
     this.proxy.y = Math.min(this.a.y, this.b.y, this.c.y, this.d.y);
     this.proxy.w =
-      Math.max(this.a.x, this.c.x, this.b.x, this.d.x) - this.proxy.x;
+      Math.max(this.a.x, this.b.x, this.c.x, this.d.x) - this.proxy.x;
     this.proxy.h =
       Math.max(this.a.y, this.b.y, this.c.y, this.d.y) - this.proxy.y;
   }
