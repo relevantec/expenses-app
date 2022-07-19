@@ -67,10 +67,10 @@ export class CameraComponent implements OnInit {
     this.boundry.y = cvRect.top - wrRect.top - DOT_WIDTH / 2;
     this.boundry.s = canvas.width / cvRect.width;
 
-    this.a.x = this.c.x = this.boundry.w / 6;
-    this.b.x = this.d.x = this.a.x * 5;
-    this.a.y = this.b.y = this.boundry.h / 6;
-    this.c.y = this.d.y = this.a.y * 5;
+    this.a.x = this.c.x = DOT_WIDTH / 2;
+    this.b.x = this.d.x = this.boundry.w - DOT_WIDTH / 2;
+    this.a.y = this.b.y = DOT_WIDTH / 2;
+    this.c.y = this.d.y = this.boundry.h - DOT_WIDTH / 2;
     this.calcProxy();
   }
 
@@ -133,11 +133,11 @@ export class CameraComponent implements OnInit {
 
     const ab = Math.hypot(this.b.x - this.a.x, this.b.y - this.a.y);
     const cd = Math.hypot(this.d.x - this.c.x, this.d.y - this.c.y);
-    const ow = this.boundry.s * (ab + cd) / 2;
+    const ow = (this.boundry.s * (ab + cd)) / 2;
 
     const ac = Math.hypot(this.c.x - this.a.x, this.c.y - this.a.y);
     const bd = Math.hypot(this.d.x - this.b.x, this.d.y - this.b.y);
-    const oh = this.boundry.s * (ac + bd) / 2;
+    const oh = (this.boundry.s * (ac + bd)) / 2;
 
     const min = {
       x: this.proxy.x,
@@ -152,24 +152,15 @@ export class CameraComponent implements OnInit {
       y: oh / ch,
     };
 
-    console.log(this.boundry.s);
-
     crop.width = ow;
     crop.height = oh;
 
     const src = this.preview.nativeElement;
-
-    ctx.drawImage(
-      src,
-      min.x * this.boundry.s,
-      min.y * this.boundry.s,
-      cw * this.boundry.s,
-      ch * this.boundry.s,
-      0,
-      0,
-      ow,
-      oh
-    );
+    const sx = min.x * this.boundry.s;
+    const sy = min.y * this.boundry.s;
+    const sw = cw * this.boundry.s;
+    const sh = ch * this.boundry.s;
+    ctx.drawImage(src, sx, sy, sw, sh, 0, 0, ow, oh);
 
     this.output.nativeElement.replaceChildren();
     this.output.nativeElement.appendChild(crop);
@@ -190,8 +181,6 @@ export class CameraComponent implements OnInit {
       let after = [];
       after.push(0, 0, img.width, 0);
       after.push(0, img.height, img.width, img.height);
-
-      console.log({ before, after });
 
       fx.draw(fx.texture(img)).perspective(before, after).update();
       this.output.nativeElement.appendChild(fx);
