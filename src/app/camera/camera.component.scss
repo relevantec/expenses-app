@@ -1,9 +1,10 @@
-.photo-wrapper {
+.buttons-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
   gap: 30px;
+  .buttons-start {
+    flex: 1;
+    max-width: 80%;
+  }
 }
 
 .preview-wrapper {
@@ -27,6 +28,7 @@
   right: 0;
   bottom: 0;
   left: 0;
+  overflow: hidden;
 }
 
 svg {
@@ -53,6 +55,18 @@ svg {
   margin-top: -8px;
   border-radius: 50%;
   background-color: blue;
+  opacity: 0.8;
+  &::after {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    bottom: -50px;
+    left: -50px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+  }
 }
 
 .proxy {
@@ -65,8 +79,10 @@ svg {
   padding: 8px;
 }
 
-.crop-wrapper {
-  max-width: fit-content;
-  max-width: fit-content;
-  overflow: hidden;
+.output-wrapper {
+  padding: 8px;
+}
+.output-canvas {
+  display: block;
+  max-width: 100%;
 }

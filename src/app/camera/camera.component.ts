@@ -11,7 +11,7 @@ const DOT_WIDTH = 16;
 })
 export class CameraComponent implements OnInit {
   @ViewChild('previewRef') preview?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('outputRef') output!: ElementRef<HTMLDivElement>;
+  @ViewChild('outputRef') output!: ElementRef<HTMLCanvasElement>;
 
   img?: HTMLImageElement;
 
@@ -92,7 +92,7 @@ export class CameraComponent implements OnInit {
   }
 
   onResize() {
-    this.calcBoundry();
+    // this.calcBoundry();
   }
 
   loadPhoto(e: any) {
@@ -133,15 +133,15 @@ export class CameraComponent implements OnInit {
 
     const ab = Math.hypot(this.b.x - this.a.x, this.b.y - this.a.y);
     const cd = Math.hypot(this.d.x - this.c.x, this.d.y - this.c.y);
-    const ow = (this.boundry.s * (ab + cd)) / 2;
+    const ow = Math.round((this.boundry.s * (ab + cd)) / 2);
 
     const ac = Math.hypot(this.c.x - this.a.x, this.c.y - this.a.y);
     const bd = Math.hypot(this.d.x - this.b.x, this.d.y - this.b.y);
-    const oh = (this.boundry.s * (ac + bd)) / 2;
+    const oh = Math.round((this.boundry.s * (ac + bd)) / 2);
 
     const min = {
-      x: this.proxy.x,
-      y: this.proxy.y,
+      x: this.proxy.x - DOT_WIDTH / 2,
+      y: this.proxy.y - DOT_WIDTH / 2,
     };
 
     const cw = this.proxy.w;
@@ -162,13 +162,11 @@ export class CameraComponent implements OnInit {
     const sh = ch * this.boundry.s;
     ctx.drawImage(src, sx, sy, sw, sh, 0, 0, ow, oh);
 
-    this.output.nativeElement.replaceChildren();
-    this.output.nativeElement.appendChild(crop);
-
     const dot = (pos: string) => {
       const ind = pos[0] as 'a' | 'b' | 'c' | 'd';
       const axis = pos[1] as 'x' | 'y';
-      return (this[ind][axis] - min[axis]) * scale[axis];
+      const res = (this[ind][axis] - DOT_WIDTH / 2 - min[axis]) * scale[axis];
+      return Math.round(res);
     };
 
     let img = new Image();
@@ -183,7 +181,10 @@ export class CameraComponent implements OnInit {
       after.push(0, img.height, img.width, img.height);
 
       fx.draw(fx.texture(img)).perspective(before, after).update();
-      this.output.nativeElement.appendChild(fx);
+      const output = this.output.nativeElement;
+      output.width = img.width - DOT_WIDTH / 2;
+      output.height = img.height - DOT_WIDTH / 2;
+      output.getContext('2d')?.drawImage(fx, 0, 0);
     });
   }
 }

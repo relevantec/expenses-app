@@ -1,6 +1,10 @@
-<div class="photo-wrapper">
-  <input type="file" accept="image/*" (change)="loadPhoto($event)" />
-  <button (click)="takeRectangleFromImg()">Cut the Image</button>
+<div class="buttons-wrapper">
+  <div class="buttons-start">
+    <input type="file" accept="image/*" (change)="loadPhoto($event)" />
+  </div>
+  <div>
+    <button (click)="takeRectangleFromImg()">Cut the Image</button>
+  </div>
 </div>
 <div *ngIf="img" class="preview-wrapper" (window:resize)="onResize()">
   <canvas #previewRef class="preview-canvas"></canvas>
@@ -64,4 +68,6 @@
     ></div>
   </div>
 </div>
-<div class="crop-wrapper" #outputRef></div>
+<div class="output-wrapper">
+  <canvas #outputRef class="output-canvas"></canvas>
+</div>
