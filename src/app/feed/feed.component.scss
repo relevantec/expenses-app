@@ -1,0 +1,29 @@
+@import '../theme/variables.scss';
+
+.feeds-wrapper {
+    height: 100vh;
+    width: 100%;
+
+}
+
+.add-new-button {
+    position: sticky;
+    right: 0;
+    bottom: 0;
+    width: 80px;
+    height: 80px;
+    background-color: $exp-orange;
+    a {
+        text-decoration: none;
+    }
+}
+
+.no-feeds {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // position: absolute;
+    // top: 50%;
+    // right: 40%;
+}

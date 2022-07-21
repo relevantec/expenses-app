@@ -23,6 +23,7 @@ import { CameraComponent } from './camera/camera.component';
 import { AuthInterceptor } from './helpers/auth.interceptor';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { HeaderComponent } from './_components/header/header.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { environment } from '../environments/environment';
     DetailsComponent,
     ExpenseFormComponent,
     LoginResultComponent,
-    CameraComponent
+    CameraComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
