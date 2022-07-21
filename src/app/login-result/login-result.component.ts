@@ -18,6 +18,7 @@ export class LoginResultComponent implements OnInit {
   ngOnInit(): void {
     this.result = this.route.snapshot.paramMap.get('token')!;
     this.authService.saveToken(this.result);
+    this.router.navigate(['/feed']);
   }
 
   getInfo() {

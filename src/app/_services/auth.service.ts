@@ -1,12 +1,7 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-  HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { Injectable } from '@angular/core';
-import { catchError, mergeMap, Observable, tap, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 
 export interface AuthResponseData {
   application_identifier: string;
@@ -20,7 +15,6 @@ export interface AuthResponseData {
   providedIn: 'root',
 })
 export class AuthService {
-
   constructor(private http: HttpClient) {}
 
   // headers: new HttpHeaders({
@@ -36,16 +30,21 @@ export class AuthService {
     return throwError('Something wrong happened; please try again later.');
   }
 
+  public isAuthenticated(): boolean {
+    if(localStorage.getItem('Bearer')) {
+      return true;
+    }
+    return false;
+  }
+
   getInfo() {
     return this.http.get<any>('https://expenses.ldisol.bg/v1/info');
   }
 
   saveToken(token: string) {
+    if (!token) return;
     localStorage.setItem('Bearer', token);
   }
 
-  getUser() {
-
-  }
-  
+  getUser() {}
 }

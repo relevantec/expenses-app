@@ -1,0 +1,24 @@
+@import '../../theme/variables.scss';
+
+.example-icon {
+    padding: 0 14px;
+  }
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+mat-toolbar {
+    background-color: $exp-orange;
+    max-height: 50px;
+    color: $exp-text-light;
+    .menu-button {
+        background-color: $exp-orange;
+        box-shadow: none;
+    }
+    .title-text {
+        margin: 0 auto;
+    }
+    .filter-icon {
+        color: black;
+    }
+}

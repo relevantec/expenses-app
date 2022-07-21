@@ -1,6 +1,11 @@
-<div>
-    <!-- Feed -->
-    <!-- no feeds -->
-    <!-- add new/add expense -->
-    <!-- settings -->
+<app-header></app-header>
+<div class="feeds-wrapper">
+    <div 
+    class="no-feeds"
+    *ngIf="!feed.length">No Feed Items</div>
+    <button 
+    *ngIf="authenticated"
+    class="add-new-button"mat-fab>
+          <a routerLink="/camera">Add New <br>+</a>  
+    </button>
 </div>
